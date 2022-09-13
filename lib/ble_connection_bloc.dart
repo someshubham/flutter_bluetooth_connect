@@ -7,13 +7,17 @@ import 'package:location_permissions/location_permissions.dart';
 class BLEConnectionBloc {
   final flutterReactiveBle = FlutterReactiveBle();
 
-  final _deviceController = StreamController<DiscoveredDevice>();
+  final _deviceController = StreamController<DiscoveredDevice?>();
 
-  late StreamSubscription<DiscoveredDevice> _scanStream;
+  StreamSubscription<DiscoveredDevice>? _scanStream;
   late StreamSubscription<ConnectionStateUpdate> _connectionStream;
 
-  Stream<DiscoveredDevice> get foundDevice {
+  Stream<DiscoveredDevice?> get foundDevice {
     return _deviceController.stream;
+  }
+
+  void clearDeviceFound() {
+    _deviceController.add(null);
   }
 
   Future<bool> _getPermission() async {
@@ -32,6 +36,8 @@ class BLEConnectionBloc {
   Future<void> findDevices(String deviceUuid) async {
     final permGranted = await _getPermission();
     if (permGranted) {
+      clearDeviceFound();
+      stopSearching();
       _scanStream = flutterReactiveBle.scanForDevices(
         withServices: [],
         scanMode: ScanMode.lowLatency,
@@ -45,7 +51,7 @@ class BLEConnectionBloc {
   }
 
   void stopSearching() {
-    _scanStream.cancel();
+    _scanStream?.cancel();
   }
 
   Stream<ConnectionStateUpdate> connectToDevice(DiscoveredDevice uniqueDevice) {
@@ -57,30 +63,10 @@ class BLEConnectionBloc {
     );
 
     return currentConnectionStream;
-    // _connectionStream = currentConnectionStream.listen((event) async {
-    //   switch (event.connectionState) {
-    //     // We're connected and good to go!
-    //     case DeviceConnectionState.connected:
-    //       {
-    //         // setState(() {
-    //         //   _foundDeviceWaitingToConnect = false;
-    //         //   _connected = true;
-    //         // });
-    //         print("Device Connected");
-    //         break;
-    //       }
-    //     // Can add various state state updates on disconnect
-    //     case DeviceConnectionState.disconnected:
-    //       {
-    //         break;
-    //       }
-    //     default:
-    //   }
-    // });
   }
 
   void dispose() {
-    _scanStream.cancel();
+    _scanStream?.cancel();
     _connectionStream.cancel();
     _deviceController.close();
   }

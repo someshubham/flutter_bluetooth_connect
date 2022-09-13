@@ -22,7 +22,6 @@ class HomePage extends StatefulWidget {
 class HomePageState extends State<HomePage> {
   final bleConnectionBloc = BLEConnectionBloc();
   final uuidController = TextEditingController();
-  //final Uuid ledgerUuid = Uuid.parse("D43FD8C2-326E-993C-D180-31B0B5114988");
 
   bool _hasStartedSearch = false;
   bool _isDeviceConnected = false;
@@ -47,36 +46,44 @@ class HomePageState extends State<HomePage> {
     showLoader(context);
     final connectionStream = bleConnectionBloc.connectToDevice(device);
     connectionSubscription = connectionStream.listen((event) {
-      if (event.failure?.code == ConnectionError.unknown ||
-          event.failure?.code == ConnectionError.failedToConnect) {
-        if (Navigator.canPop(context)) {
-          Navigator.pop(context);
-        }
-      }
-
-      switch (event.connectionState) {
-        // We're connected and good to go!
-        case DeviceConnectionState.connected:
-          {
-            if (Navigator.canPop(context)) {
-              Navigator.pop(context);
-            }
-            setState(() {
-              _isDeviceConnected = true;
-            });
-            break;
-          }
-        // Can add various state state updates on disconnect
-        case DeviceConnectionState.disconnected:
-          {
-            if (Navigator.canPop(context)) {
-              Navigator.pop(context);
-            }
-            break;
-          }
-        default:
-      }
+      handleConnectionEventChange(event);
     });
+  }
+
+  void handleConnectionEventChange(ConnectionStateUpdate event) {
+    handleOnConnectionError(event);
+
+    switch (event.connectionState) {
+      // We're connected and good to go!
+      case DeviceConnectionState.connected:
+        {
+          if (Navigator.canPop(context)) {
+            Navigator.pop(context);
+          }
+          setState(() {
+            _isDeviceConnected = true;
+          });
+          break;
+        }
+      // Can add various state state updates on disconnect
+      case DeviceConnectionState.disconnected:
+        {
+          if (Navigator.canPop(context)) {
+            Navigator.pop(context);
+          }
+          break;
+        }
+      default:
+    }
+  }
+
+  void handleOnConnectionError(ConnectionStateUpdate event) {
+    if (event.failure?.code == ConnectionError.unknown ||
+        event.failure?.code == ConnectionError.failedToConnect) {
+      if (Navigator.canPop(context)) {
+        Navigator.pop(context);
+      }
+    }
   }
 
   @override
@@ -141,10 +148,10 @@ class HomePageState extends State<HomePage> {
             height: 16,
           ),
           Expanded(
-            child: StreamBuilder<DiscoveredDevice>(
+            child: StreamBuilder<DiscoveredDevice?>(
               stream: bleConnectionBloc.foundDevice,
               builder: (context, snapshot) {
-                if (!_hasStartedSearch && !snapshot.hasData) {
+                if (!_hasStartedSearch && snapshot.data == null) {
                   return Center(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -156,7 +163,7 @@ class HomePageState extends State<HomePage> {
                   );
                 }
 
-                if (_hasStartedSearch && !snapshot.hasData) {
+                if (_hasStartedSearch && snapshot.data == null) {
                   return Center(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
