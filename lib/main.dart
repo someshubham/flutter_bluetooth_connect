@@ -50,6 +50,11 @@ class HomePageState extends State<HomePage> {
     });
   }
 
+
+
+
+  // TODO(someshubham): Fix Disconnecting a device, never gets scanned again
+  // Find the description in the issue created here https://github.com/PhilipsHue/flutter_reactive_ble/issues/575
   void disconnectDevice() {
     setState(() {
       _isDeviceConnected = false;
