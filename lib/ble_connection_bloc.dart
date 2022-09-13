@@ -6,15 +6,14 @@ import 'package:location_permissions/location_permissions.dart';
 
 class BLEConnectionBloc {
   final flutterReactiveBle = FlutterReactiveBle();
-  final _devices = <DiscoveredDevice>[];
 
-  final _deviceListController = StreamController<List<DiscoveredDevice>>();
+  final _deviceController = StreamController<DiscoveredDevice>();
 
   late StreamSubscription<DiscoveredDevice> _scanStream;
   late StreamSubscription<ConnectionStateUpdate> _connectionStream;
 
-  Stream<List<DiscoveredDevice>> get foundDevices {
-    return _deviceListController.stream;
+  Stream<DiscoveredDevice> get foundDevice {
+    return _deviceController.stream;
   }
 
   Future<bool> _getPermission() async {
@@ -35,58 +34,54 @@ class BLEConnectionBloc {
     if (permGranted) {
       _scanStream = flutterReactiveBle.scanForDevices(
         withServices: [],
+        scanMode: ScanMode.lowLatency,
       ).listen((device) {
         if (device.id == deviceUuid) {
-          _scanStream.cancel();
-          _devices.add(device);
-          _deviceListController.add(_devices);
+          _deviceController.add(device);
+          stopSearching();
         }
-        // if (device.name.isNotEmpty) {
-        //   final alreadyAdded =
-        //       _devices.any((element) => element.id == device.id);
-
-        //   if (!alreadyAdded) {
-        //     _devices.add(device);
-        //     _deviceListController.add(_devices);
-        //   }
-        // }
       });
     }
   }
 
-  void connectToDevice(DiscoveredDevice uniqueDevice) {
+  void stopSearching() {
     _scanStream.cancel();
+  }
+
+  Stream<ConnectionStateUpdate> connectToDevice(DiscoveredDevice uniqueDevice) {
     Stream<ConnectionStateUpdate> currentConnectionStream =
         flutterReactiveBle.connectToAdvertisingDevice(
       id: uniqueDevice.id,
       prescanDuration: const Duration(seconds: 1),
       withServices: [],
     );
-    _connectionStream = currentConnectionStream.listen((event) async {
-      switch (event.connectionState) {
-        // We're connected and good to go!
-        case DeviceConnectionState.connected:
-          {
-            // setState(() {
-            //   _foundDeviceWaitingToConnect = false;
-            //   _connected = true;
-            // });
-            print("Device Connected");
-            break;
-          }
-        // Can add various state state updates on disconnect
-        case DeviceConnectionState.disconnected:
-          {
-            break;
-          }
-        default:
-      }
-    });
+
+    return currentConnectionStream;
+    // _connectionStream = currentConnectionStream.listen((event) async {
+    //   switch (event.connectionState) {
+    //     // We're connected and good to go!
+    //     case DeviceConnectionState.connected:
+    //       {
+    //         // setState(() {
+    //         //   _foundDeviceWaitingToConnect = false;
+    //         //   _connected = true;
+    //         // });
+    //         print("Device Connected");
+    //         break;
+    //       }
+    //     // Can add various state state updates on disconnect
+    //     case DeviceConnectionState.disconnected:
+    //       {
+    //         break;
+    //       }
+    //     default:
+    //   }
+    // });
   }
 
   void dispose() {
     _scanStream.cancel();
     _connectionStream.cancel();
-    _deviceListController.close();
+    _deviceController.close();
   }
 }
