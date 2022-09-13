@@ -38,7 +38,7 @@ class HomePageState extends State<HomePage> {
   }
 
   void _startScan({required String uuid}) async {
-    //"D43FD8C2-326E-993C-D180-31B0B5114988"
+    //This is the UUID for available Ledger "D43FD8C2-326E-993C-D180-31B0B5114988"
     bleConnectionBloc.findDevices(uuid);
   }
 
