@@ -50,6 +50,13 @@ class HomePageState extends State<HomePage> {
     });
   }
 
+  void disconnectDevice() {
+    setState(() {
+      _isDeviceConnected = false;
+    });
+    connectionSubscription?.cancel();
+  }
+
   void handleConnectionEventChange(ConnectionStateUpdate event) {
     handleOnConnectionError(event);
 
@@ -190,14 +197,55 @@ class HomePageState extends State<HomePage> {
                   );
                 }
                 return ListTile(
-                  title: Text(snapshot.data!.name),
-                  subtitle: Text(snapshot.data!.id),
-                  trailing: _isDeviceConnected
-                      ? const Text(
-                          "Connected",
-                          style: TextStyle(
-                            color: Colors.grey,
+                  title: Row(
+                    children: [
+                      Text(snapshot.data!.name),
+                      const SizedBox(width: 6),
+                      if (_isDeviceConnected)
+                        Container(
+                          padding: const EdgeInsets.all(4),
+                          decoration: BoxDecoration(
+                            color: Colors.green[50],
+                            border: Border.all(
+                              color: Colors.green,
+                              width: 1,
+                            ),
+                            borderRadius: BorderRadius.circular(20),
                           ),
+                          child: const Text(
+                            "Connected",
+                            style: TextStyle(
+                              fontSize: 10,
+                              color: Colors.green,
+                            ),
+                          ),
+                        ),
+                    ],
+                  ),
+                  subtitle: Padding(
+                    padding: const EdgeInsets.only(top: 12.0),
+                    child: Text(snapshot.data!.id),
+                  ),
+                  trailing: _isDeviceConnected
+                      ? Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Text(
+                              "Disconnect",
+                              style: TextStyle(
+                                color: Colors.grey,
+                              ),
+                            ),
+                            IconButton(
+                              onPressed: () {
+                                disconnectDevice();
+                              },
+                              icon: const Icon(
+                                Icons.close,
+                                color: Colors.red,
+                              ),
+                            ),
+                          ],
                         )
                       : ElevatedButton.icon(
                           onPressed: () {
