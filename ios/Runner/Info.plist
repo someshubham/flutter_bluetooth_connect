@@ -45,6 +45,8 @@
 	<false/>
 	<key>CADisableMinimumFrameDurationOnPhone</key>
 	<true/>
+	<key>NSCameraUsageDescription</key>
+	<string>Camera permission is required for barcode and document.</string>
 	<key>NSBluetoothAlwaysUsageDescription</key>
 	<string>The app uses bluetooth to find, connect and transfer data between different devices</string>
 	<key>NSBluetoothPeripheralUsageDescription</key>

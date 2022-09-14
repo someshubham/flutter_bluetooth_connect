@@ -1,8 +1,20 @@
 PODS:
+  - "app_settings (3.0.0+1)":
+    - Flutter
+  - barcode_scan2 (0.0.1):
+    - Flutter
+    - MTBBarcodeScanner
+    - SwiftProtobuf
   - Flutter (1.0.0)
+  - image_picker_ios (0.0.1):
+    - Flutter
   - "location_permissions (3.0.0+1)":
     - Flutter
+  - MTBBarcodeScanner (5.0.11)
   - Protobuf (3.21.5)
+  - qr_code_scanner (0.2.0):
+    - Flutter
+    - MTBBarcodeScanner
   - reactive_ble_mobile (0.0.1):
     - Flutter
     - Protobuf (~> 3.5)
@@ -10,27 +22,45 @@ PODS:
   - SwiftProtobuf (1.20.1)
 
 DEPENDENCIES:
+  - app_settings (from `.symlinks/plugins/app_settings/ios`)
+  - barcode_scan2 (from `.symlinks/plugins/barcode_scan2/ios`)
   - Flutter (from `Flutter`)
+  - image_picker_ios (from `.symlinks/plugins/image_picker_ios/ios`)
   - location_permissions (from `.symlinks/plugins/location_permissions/ios`)
+  - qr_code_scanner (from `.symlinks/plugins/qr_code_scanner/ios`)
   - reactive_ble_mobile (from `.symlinks/plugins/reactive_ble_mobile/ios`)
 
 SPEC REPOS:
   trunk:
+    - MTBBarcodeScanner
     - Protobuf
     - SwiftProtobuf
 
 EXTERNAL SOURCES:
+  app_settings:
+    :path: ".symlinks/plugins/app_settings/ios"
+  barcode_scan2:
+    :path: ".symlinks/plugins/barcode_scan2/ios"
   Flutter:
     :path: Flutter
+  image_picker_ios:
+    :path: ".symlinks/plugins/image_picker_ios/ios"
   location_permissions:
     :path: ".symlinks/plugins/location_permissions/ios"
+  qr_code_scanner:
+    :path: ".symlinks/plugins/qr_code_scanner/ios"
   reactive_ble_mobile:
     :path: ".symlinks/plugins/reactive_ble_mobile/ios"
 
 SPEC CHECKSUMS:
+  app_settings: d103828c9f5d515c4df9ee754dabd443f7cedcf3
+  barcode_scan2: 0af2bb63c81b4565aab6cd78278e4c0fa136dbb0
   Flutter: 50d75fe2f02b26cc09d224853bb45737f8b3214a
+  image_picker_ios: b786a5dcf033a8336a657191401bfdf12017dabb
   location_permissions: 7e0f9aa0f60deb8ff93ddf0e2a164c7e8197bc94
+  MTBBarcodeScanner: f453b33c4b7dfe545d8c6484ed744d55671788cb
   Protobuf: 7504b04fffcf6662ad629694db8231f5e744327f
+  qr_code_scanner: bb67d64904c3b9658ada8c402e8b4d406d5d796e
   reactive_ble_mobile: 9ce6723d37ccf701dbffd202d487f23f5de03b4c
   SwiftProtobuf: e40a7684079620e84ba522dbaeab0cddb0ec7ffd
 

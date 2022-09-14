@@ -3,8 +3,10 @@ import 'dart:async';
 import 'package:flutter_bluetooth_connect/ble_connection_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bluetooth_connect/dialogs/loading_dialog.dart';
+import 'package:flutter_bluetooth_connect/utils/qr_scan_util.dart';
 import 'package:flutter_bluetooth_connect/widgets/chasing_dots_indicator.dart';
 import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
+import 'package:barcode_scan2/barcode_scan2.dart';
 
 void main() {
   return runApp(
@@ -49,9 +51,6 @@ class HomePageState extends State<HomePage> {
       handleConnectionEventChange(event);
     });
   }
-
-
-
 
   // TODO(someshubham): Fix Disconnecting a device, never gets scanned again
   // Find the description in the issue created here https://github.com/PhilipsHue/flutter_reactive_ble/issues/575
@@ -120,13 +119,23 @@ class HomePageState extends State<HomePage> {
         children: [
           Padding(
             padding: const EdgeInsets.all(12),
-            child: TextField(
-              controller: uuidController,
-              decoration: const InputDecoration(
-                labelText: "Ledger UUID",
-                hintText: "Enter Ledger UUID",
-                border: OutlineInputBorder(),
-              ),
+            child: Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    controller: uuidController,
+                    decoration: const InputDecoration(
+                      labelText: "Ledger UUID",
+                      hintText: "Enter Ledger UUID",
+                      border: OutlineInputBorder(),
+                    ),
+                  ),
+                ),
+                IconButton(
+                  icon: const Icon(Icons.qr_code),
+                  onPressed: () => scanQrCode(context),
+                ),
+              ],
             ),
           ),
           Row(
@@ -286,6 +295,23 @@ class HomePageState extends State<HomePage> {
       ),
       barrierDismissible: false,
     );
+  }
+
+  Future<void> scanQrCode(BuildContext context) async {
+    await Future.delayed(const Duration(milliseconds: 10), () {
+      FocusScope.of(context).unfocus();
+    });
+
+    final res = await QRScanUtil.scan(context);
+    if (res.isNotEmpty) {
+      if (res[1]) {
+        if (res[2] == ResultType.Cancelled) {
+          return;
+        }
+        final String qrCode = res[0];
+        uuidController.text = qrCode.trim();
+      }
+    }
   }
 
   @override
