@@ -141,24 +141,28 @@ class HomePageState extends State<HomePage> {
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 12.0,
-                  vertical: 2,
-                ),
-                child: ElevatedButton.icon(
-                  onPressed: () {
-                    validateAndScan();
-                  },
-                  icon: const Icon(Icons.search),
-                  label: const Text("Search"),
-                  style: ElevatedButton.styleFrom(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20),
+              AnimatedOpacity(
+                opacity: _isDeviceConnected ? 0 : 1,
+                duration: const Duration(milliseconds: 200),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12.0,
+                    vertical: 2,
+                  ),
+                  child: ElevatedButton.icon(
+                    onPressed: () {
+                      validateAndScan();
+                    },
+                    icon: const Icon(Icons.search),
+                    label: const Text("Search"),
+                    style: ElevatedButton.styleFrom(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
+                      ),
                     ),
                   ),
                 ),
-              ),
+              )
             ],
           ),
           const SizedBox(
